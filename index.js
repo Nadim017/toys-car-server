@@ -35,12 +35,18 @@ async function run() {
       res.send(result);
       console.log(result);
     });
-    app.get('/toy/:id', async (req, res) => {
+    app.get('/toydetails/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await toyCollection.findOne(query);
       res.send(result);
     });
+    // app.get('/singletoy/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await toyCollection.findOne(query);
+    //   res.send(result);
+    // });
 
     app.post('/toy', async (req, res) => {
       const toy = req.body;

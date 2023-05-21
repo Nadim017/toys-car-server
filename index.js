@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.3w4hwcs.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -35,10 +35,39 @@ async function run() {
       res.send(result);
       console.log(result);
     });
+    app.get('/toy/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.findOne(query);
+      res.send(result);
+    });
 
     app.post('/toy', async (req, res) => {
       const toy = req.body;
       const result = await toyCollection.insertOne(toy);
+      res.send(result);
+    });
+
+    app.put('/toy/:id', async (req, res) => {
+      const id = req.params.id;
+      const toy = req.body;
+
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updatedToy = {
+        $set: {
+          ...toy,
+        },
+      };
+      const result = await toyCollection.updateOne(filter, updatedToy, option);
+      res.send(result);
+    });
+
+    app.delete('/toy/:id', async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.deleteOne(query);
       res.send(result);
     });
 
